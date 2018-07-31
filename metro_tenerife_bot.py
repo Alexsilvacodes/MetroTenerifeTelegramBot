@@ -7,6 +7,7 @@ import logging
 
 from bs4 import BeautifulSoup
 import requests, json
+import os
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
@@ -235,9 +236,14 @@ def error(bot, update, error):
 def main():
     lang = "en"
 
-    f_token = open("token", "r")
-    token = f_token.read().rstrip("\n")
-    f_token.close()
+    token = ""
+    is_prod = os.environ.get('IS_HEROKU', None)
+    if is_prod:
+        token = os.environ.get('TOKEN', None)
+    else:
+        f_token = open("token", "r")
+        token = f_token.read().rstrip("\n")
+        f_token.close()
     updater = Updater(token)
 
     updater.dispatcher.add_handler(CommandHandler("start", start))
