@@ -8,4 +8,4 @@ Python 🐍
 [Heroku](https://heroku.com)
 
 ## License
-[MIT](License)
+[MIT](LICENSE)
