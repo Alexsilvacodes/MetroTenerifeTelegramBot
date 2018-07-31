@@ -1,0 +1,7 @@
+token
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+*.pyc
+*.pyo
