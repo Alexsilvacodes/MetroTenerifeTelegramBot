@@ -86,6 +86,7 @@ def formatStops(stops, line, lang="es"):
 def formatPanels(panels, line, stop, lang="es"):
     panels_aux = []
     panels_res = []
+    panels_last_update = ""
 
     for panel in panels:
         if line == panel["route"] and stop == panel["stop"]:
@@ -96,6 +97,7 @@ def formatPanels(panels, line, stop, lang="es"):
         panels_aux = panels_aux[0:4]
 
     for panel in panels_aux:
+        panels_last_update = panel["lastUpdateFormatted"]
         if lang is "es":
             panels_res.append({
                 "to": "🚇 > " + panel["destinationStopDescription"],
@@ -107,7 +109,7 @@ def formatPanels(panels, line, stop, lang="es"):
                 "remaining": "🕓 > " + str(panel["remainingMinutes"]) + " minutes remaining"
                 })
 
-    return panels_res
+    return panels_res, panels_last_update
 
 
 """
@@ -190,7 +192,7 @@ def button(bot, update):
         line = int(data.split("/")[2])
         lines, stops, panels = requestData()
         if len(panels) > 0:
-            panelsFormatted = formatPanels(panels, line, stop, lang=lang)
+            panelsFormatted, last_update = formatPanels(panels, line, stop, lang=lang)
             stopsFormatted = formatStops(stops, line)
             stopName = ""
             for stopItem in stopsFormatted:
@@ -204,6 +206,7 @@ def button(bot, update):
                     reply = "Oncoming trams for *" + stopName + "*\n\n"
                 for panel in panelsFormatted:
                     reply = reply + panel["to"] + "\n" + panel["remaining"] + "\n\n"
+                reply = "_" + last_update + "_"
                 bot.send_message(text=reply,
                                 chat_id=query.message.chat_id,
                                 message_id=query.message.message_id,
