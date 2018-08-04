@@ -206,7 +206,7 @@ def button(bot, update):
                     reply = "Oncoming trams for *" + stopName + "*\n\n"
                 for panel in panelsFormatted:
                     reply = reply + panel["to"] + "\n" + panel["remaining"] + "\n\n"
-                reply = reply + "_" + last_update + "_"
+                reply = reply + "_" + last_update + "_ (GMT)"
                 bot.send_message(text=reply,
                                 chat_id=query.message.chat_id,
                                 message_id=query.message.message_id,
