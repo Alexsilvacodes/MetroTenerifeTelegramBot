@@ -155,6 +155,7 @@ def requestInfo(bot, update):
     update.message.reply_text(text, reply_markup=reply_markup)
     
 def requestLastQueriedStopInfo(bot, update):
+    query = update.callback_query
     lines, stops, panels = requestData()
     line = last_line
     stop = last_stop
