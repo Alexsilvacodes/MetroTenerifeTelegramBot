@@ -18,6 +18,8 @@ logger = logging.getLogger(__name__)
 Metro Tenerife parser
 """
 
+last_line = 1
+last_stop = "INT"
 
 def requestData():
     url = "http://tranviaonline.metrotenerife.com/#paneles"
@@ -120,7 +122,7 @@ lang = ""
 
 def start(bot, update):
     # update.message.reply_text("To use this bot in english call /en\n===================\nPara usar el bot en castellano use /es")
-    update.message.reply_text("Use /start to initiate this bot.\nUse /nexttram to get info about the next tram for each stop.")
+    update.message.reply_text("Use /start to test this bot.\nUse /nexttram to get info about the next tram for each stop.\nUser /lasttram to get info about the next tram for the last time queried stop.")
 
 
 def spanish(bot, update):
@@ -151,6 +153,29 @@ def requestInfo(bot, update):
     else:
         text = "Please choose the tram line 🚇"
     update.message.reply_text(text, reply_markup=reply_markup)
+    
+def requestLastQueriedStopInfo(bot, update):
+    lines, stops, panels = requestData()
+    if len(panels) > 0:
+        panelsFormatted, last_update = formatPanels(panels, line, stop, lang=lang)
+        stopsFormatted = formatStops(stops, line)
+        stopName = ""
+        for stopItem in stopsFormatted:
+            if stopItem["id"] == stop:
+                stopName = stopItem["name"]
+            if len(panelsFormatted) > 0:
+                reply = ""
+                if lang == "es":
+                    reply = "Próximos tranvías en *" + stopName + "*\n\n"
+                else:
+                    reply = "Oncoming trams for *" + stopName + "*\n\n"
+                for panel in panelsFormatted:
+                    reply = reply + panel["to"] + "\n" + panel["remaining"] + "\n\n"
+                reply = reply + "_" + last_update + "_ (GMT)"
+                bot.send_message(text=reply,
+                                chat_id=query.message.chat_id,
+                                message_id=query.message.message_id,
+                                parse_mode= "Markdown")
 
 
 def button(bot, update):
@@ -162,6 +187,7 @@ def button(bot, update):
 
     if type == "line":
         line = int(data.split("/")[1])
+        last_line = line
         lines, stops, panels = requestData()
         if len(stops) > 0:
             stopsFormatted = formatStops(stops, line)
@@ -189,6 +215,7 @@ def button(bot, update):
                                 reply_markup=reply_markup)
     elif type == "stop":
         stop = data.split("/")[1]
+        last_stop = stop
         line = int(data.split("/")[2])
         lines, stops, panels = requestData()
         if len(panels) > 0:
@@ -225,9 +252,9 @@ def button(bot, update):
 def help(bot, update):
     help = ""
     if lang == "es":
-        help = "Use /start para iniciar el bot.\nUse /nexttram para obtener información acerca del siguiente tranvía por cada parada."
+        help = "Use /start para iniciar el bot.\nUse /nexttram para obtener información acerca del siguiente tranvía por cada parada.\nUser /lasttram para obtener información acerca del siguiente tranvía en la parada que se consultó la última vez."
     else:
-        help = "Use /start to test this bot.\nUse /nexttram to get info about the next tram for each stop."
+        help = "Use /start to test this bot.\nUse /nexttram to get info about the next tram for each stop.\nUser /lasttram to get info about the next tram for the last time queried stop."
 
     update.message.reply_text(help)
 
@@ -253,6 +280,7 @@ def main():
     # updater.dispatcher.add_handler(CommandHandler("es", spanish))
     # updater.dispatcher.add_handler(CommandHandler("en", english))
     updater.dispatcher.add_handler(CommandHandler("nexttram", requestInfo))
+    updater.dispatcher.add_handler(CommandHandler("lasttram", requestLastQueriedStopInfo))
     updater.dispatcher.add_handler(CallbackQueryHandler(button))
     updater.dispatcher.add_handler(CommandHandler("help", help))
     updater.dispatcher.add_error_handler(error)
