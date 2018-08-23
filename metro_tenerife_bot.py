@@ -175,7 +175,7 @@ def requestLastQueriedStopInfo(bot, update):
                 for panel in panelsFormatted:
                     reply = reply + panel["to"] + "\n" + panel["remaining"] + "\n\n"
                 reply = reply + "_" + last_update + "_ (GMT)"
-                update.message.reply_text(text, parse_mode= "Markdown")
+                update.message.reply_text(reply, parse_mode= "Markdown")
 
 
 def button(bot, update):
