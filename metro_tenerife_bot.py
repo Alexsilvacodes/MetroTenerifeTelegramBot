@@ -166,16 +166,16 @@ def requestLastQueriedStopInfo(bot, update):
         for stopItem in stopsFormatted:
             if stopItem["id"] == stop:
                 stopName = stopItem["name"]
-            if len(panelsFormatted) > 0:
-                reply = ""
-                if lang == "es":
-                    reply = "Próximos tranvías en *" + stopName + "*\n\n"
-                else:
-                    reply = "Oncoming trams for *" + stopName + "*\n\n"
-                for panel in panelsFormatted:
-                    reply = reply + panel["to"] + "\n" + panel["remaining"] + "\n\n"
-                reply = reply + "_" + last_update + "_ (GMT)"
-                update.message.reply_text(reply, parse_mode= "Markdown")
+        if len(panelsFormatted) > 0:
+            reply = ""
+            if lang == "es":
+                reply = "Próximos tranvías en *" + stopName + "*\n\n"
+            else:
+                reply = "Oncoming trams for *" + stopName + "*\n\n"
+            for panel in panelsFormatted:
+                reply = reply + panel["to"] + "\n" + panel["remaining"] + "\n\n"
+            reply = reply + "_" + last_update + "_ (GMT)"
+            update.message.reply_text(reply, parse_mode= "Markdown")
 
 
 def button(bot, update):
