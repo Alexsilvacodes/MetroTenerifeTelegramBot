@@ -156,8 +156,10 @@ def requestInfo(bot, update):
     
 def requestLastQueriedStopInfo(bot, update):
     lines, stops, panels = requestData()
+    line = last_line
+    stop = last_stop
     if len(panels) > 0:
-        panelsFormatted, last_update = formatPanels(panels, last_line, last_stop, lang=lang)
+        panelsFormatted, last_update = formatPanels(panels, line, stop, lang=lang)
         stopsFormatted = formatStops(stops, line)
         stopName = ""
         for stopItem in stopsFormatted:
