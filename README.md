@@ -1,4 +1,4 @@
-# MetroTenerifeTelegramBot
+# Metro Tenerife Bot (for Telegram 📱)
 Telegram bot to show the next tram for each stop (Tenerife, Spain) 🚇
 
 ## Language

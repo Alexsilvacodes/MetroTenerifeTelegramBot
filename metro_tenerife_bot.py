@@ -18,7 +18,6 @@ logger = logging.getLogger(__name__)
 Metro Tenerife parser
 """
 
-
 def requestData():
     url = "http://tranviaonline.metrotenerife.com/#paneles"
 
@@ -86,6 +85,7 @@ def formatStops(stops, line, lang="es"):
 def formatPanels(panels, line, stop, lang="es"):
     panels_aux = []
     panels_res = []
+    panels_last_update = ""
 
     for panel in panels:
         if line == panel["route"] and stop == panel["stop"]:
@@ -96,6 +96,7 @@ def formatPanels(panels, line, stop, lang="es"):
         panels_aux = panels_aux[0:4]
 
     for panel in panels_aux:
+        panels_last_update = panel["lastUpdateFormatted"]
         if lang is "es":
             panels_res.append({
                 "to": "🚇 > " + panel["destinationStopDescription"],
@@ -107,7 +108,7 @@ def formatPanels(panels, line, stop, lang="es"):
                 "remaining": "🕓 > " + str(panel["remainingMinutes"]) + " minutes remaining"
                 })
 
-    return panels_res
+    return panels_res, panels_last_update
 
 
 """
@@ -138,7 +139,7 @@ def lastStop(bot, update, user_data):
 
         lines, stops, panels = requestData()
         if len(panels) > 0:
-            panelsFormatted = formatPanels(panels, line, stop, lang=lang)
+            panelsFormatted, last_update = formatPanels(panels, line, stop, lang=lang)
             stopsFormatted = formatStops(stops, line)
             stopName = ""
             for stopItem in stopsFormatted:
@@ -152,6 +153,7 @@ def lastStop(bot, update, user_data):
                     reply = "Oncoming trams for *" + stopName + "*\n\n"
                 for panel in panelsFormatted:
                     reply = reply + panel["to"] + "\n" + panel["remaining"] + "\n\n"
+                reply = reply + "_" + last_update + "_ (GMT)"
                 bot.send_message(text=reply,
                                 chat_id=query.message.chat_id,
                                 message_id=query.message.message_id,
@@ -186,6 +188,29 @@ def requestInfo(bot, update, user_data):
     else:
         text = "Please choose the tram line 🚇"
     update.message.reply_text(text, reply_markup=reply_markup)
+    
+def requestLastQueriedStopInfo(bot, update):
+    query = update.callback_query
+    lines, stops, panels = requestData()
+    line = last_line
+    stop = last_stop
+    if len(panels) > 0:
+        panelsFormatted, last_update = formatPanels(panels, line, stop, lang=lang)
+        stopsFormatted = formatStops(stops, line)
+        stopName = ""
+        for stopItem in stopsFormatted:
+            if stopItem["id"] == stop:
+                stopName = stopItem["name"]
+        if len(panelsFormatted) > 0:
+            reply = ""
+            if lang == "es":
+                reply = "Próximos tranvías en *" + stopName + "*\n\n"
+            else:
+                reply = "Oncoming trams for *" + stopName + "*\n\n"
+            for panel in panelsFormatted:
+                reply = reply + panel["to"] + "\n" + panel["remaining"] + "\n\n"
+            reply = reply + "_" + last_update + "_ (GMT)"
+            update.message.reply_text(reply, parse_mode= "Markdown")
 
 
 def button(bot, update, user_data):
@@ -230,7 +255,7 @@ def button(bot, update, user_data):
         line = int(data.split("/")[2])
         lines, stops, panels = requestData()
         if len(panels) > 0:
-            panelsFormatted = formatPanels(panels, line, stop, lang=lang)
+            panelsFormatted, last_update = formatPanels(panels, line, stop, lang=lang)
             stopsFormatted = formatStops(stops, line)
             stopName = ""
             for stopItem in stopsFormatted:
@@ -244,6 +269,7 @@ def button(bot, update, user_data):
                     reply = "Oncoming trams for *" + stopName + "*\n\n"
                 for panel in panelsFormatted:
                     reply = reply + panel["to"] + "\n" + panel["remaining"] + "\n\n"
+                reply = reply + "_" + last_update + "_ (GMT)"
                 bot.send_message(text=reply,
                                 chat_id=query.message.chat_id,
                                 message_id=query.message.message_id,
