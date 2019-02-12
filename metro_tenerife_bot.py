@@ -123,12 +123,12 @@ def start(bot, update, user_data):
 
 def spanish(bot, update, user_data):
     user_data["lang"] = "es"
-    update.message.reply_text("Use /start para iniciar el bot.\nUse /nexttram para obtener información acerca del siguiente tranvía por cada parada.")
+    update.message.reply_text("Use /start para iniciar el bot.\nUse /nexttram para obtener información acerca del siguiente tranvía por cada parada.\nUse /lastStop para obtener información de la última parada seleccionada.")
 
 
 def english(bot, update, user_data):
     user_data["lang"] = "en"
-    update.message.reply_text("Use /start to initiate this bot.\nUse /nexttram to get info about the next tram for each stop.")
+    update.message.reply_text("Use /start to test this bot.\nUse /nexttram to get info about the next tram for each stop.\nUse /lastStop to get info about the last stop selected.")
 
 def lastStop(bot, update, user_data):
     query = update.callback_query
@@ -288,9 +288,9 @@ def button(bot, update, user_data):
 def help(bot, update, user_data):
     help = ""
     if user_data["lang"] == "es":
-        help = "Use /start para iniciar el bot.\nUse /nexttram para obtener información acerca del siguiente tranvía por cada parada.\nUse /lastStop para obtener información de la última parada seleccionada"
+        help = "Use /start para iniciar el bot.\nUse /nexttram para obtener información acerca del siguiente tranvía por cada parada.\nUse /lastStop para obtener información de la última parada seleccionada."
     else:
-        help = "Use /start to test this bot.\nUse /nexttram to get info about the next tram for each stop.\nUse /lastStop to get info about the last stop selected"
+        help = "Use /start to test this bot.\nUse /nexttram to get info about the next tram for each stop.\nUse /lastStop to get info about the last stop selected."
 
     update.message.reply_text(help)
 
@@ -314,7 +314,7 @@ def main():
     updater.dispatcher.add_handler(CommandHandler("es", spanish, pass_user_data=True))
     updater.dispatcher.add_handler(CommandHandler("en", english, pass_user_data=True))
     updater.dispatcher.add_handler(CommandHandler("nexttram", requestInfo, pass_user_data=True))
-    updater.dispatcher.add_handler(CommandHandler("lastStop", lastStop, pass_user_data=True))
+    updater.dispatcher.add_handler(CommandHandler("laststop", lastStop, pass_user_data=True))
     updater.dispatcher.add_handler(CallbackQueryHandler(button, pass_user_data=True))
     updater.dispatcher.add_handler(CommandHandler("help", help, pass_user_data=True))
     updater.dispatcher.add_error_handler(error)
