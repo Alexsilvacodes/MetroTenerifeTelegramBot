@@ -117,25 +117,14 @@ Telegram related methods
 
 
 def start(bot, update, user_data):
-    user_data["lang"] = "en"
-    update.message.reply_text("To use this bot in english call /en\n===================\nPara usar el bot en castellano use /es")
-
-
-def spanish(bot, update, user_data):
-    user_data["lang"] = "es"
-    update.message.reply_text("Use /start para iniciar el bot.\nUse /nexttram para obtener información acerca del siguiente tranvía por cada parada.")
-
-
-def english(bot, update, user_data):
-    user_data["lang"] = "en"
-    update.message.reply_text("Use /start to test this bot.\nUse /nexttram to get info about the next tram for each stop.")
+    lang = bot.get_me().language_code
+    if lang == "es":
+        update.message.reply_text("Use /start para iniciar el bot.\nUse /nexttram para obtener información acerca del siguiente tranvía por cada parada.")
+    else:
+        update.message.reply_text("Use /start to test this bot.\nUse /nexttram to get info about the next tram for each stop.")
 
 def requestInfo(bot, update, user_data):
-    try:
-        lang = user_data["lang"]
-    except KeyError:
-        lang = "en"
-        user_data["lang"] = lang
+    lang = bot.get_me().language_code
 
     lines, stops, panels = requestData()
     linesFormatted = formatLines(lines, lang=lang)
@@ -156,12 +145,7 @@ def requestInfo(bot, update, user_data):
     update.message.reply_text(text, reply_markup=reply_markup)
 
 def button(bot, update, user_data):
-    try:
-        lang = user_data["lang"]
-    except KeyError:
-        lang = "en"
-        user_data["lang"] = lang
-
+    lang = bot.get_me().language_code
     query = update.callback_query
     data = query.data
     type = data.split("/")[0]
@@ -233,11 +217,7 @@ def button(bot, update, user_data):
 
 
 def help(bot, update, user_data):
-    try:
-        lang = user_data["lang"]
-    except KeyError:
-        user_data["lang"] = "en"
-
+    lang = bot.get_me().language_code
     help = ""
     if lang == "es":
         help = "Use /start para iniciar el bot.\nUse /nexttram para obtener información acerca del siguiente tranvía por cada parada."
@@ -263,8 +243,6 @@ def main():
     updater = Updater(token)
 
     updater.dispatcher.add_handler(CommandHandler("start", start, pass_user_data=True))
-    updater.dispatcher.add_handler(CommandHandler("es", spanish, pass_user_data=True))
-    updater.dispatcher.add_handler(CommandHandler("en", english, pass_user_data=True))
     updater.dispatcher.add_handler(CommandHandler("nexttram", requestInfo, pass_user_data=True))
     updater.dispatcher.add_handler(CallbackQueryHandler(button, pass_user_data=True))
     updater.dispatcher.add_handler(CommandHandler("help", help, pass_user_data=True))
