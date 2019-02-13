@@ -159,7 +159,7 @@ def lastStop(bot, update, user_data):
                 for panel in panelsFormatted:
                     reply = reply + panel["to"] + "\n" + panel["remaining"] + "\n\n"
                 reply = reply + "_" + last_update + "_ (GMT)"
-                update.message.reply_text(reply)
+                update.message.reply_markdown(reply)
 
     except KeyError:
         text = ""
