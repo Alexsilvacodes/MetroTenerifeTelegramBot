@@ -146,7 +146,12 @@ def requestInfo(bot, update, user_data):
     update.message.reply_text(text, reply_markup=reply_markup)
 
 def button(bot, update, user_data):
-    lang = user_data["lang"]
+    try:
+        lang = user_data["lang"]
+    except KeyError:
+        user_data["lang"] = "es"
+        lang = user_data["lang"]
+
     query = update.callback_query
     data = query.data
     type = data.split("/")[0]
