@@ -123,51 +123,12 @@ def start(bot, update, user_data):
 
 def spanish(bot, update, user_data):
     user_data["lang"] = "es"
-    update.message.reply_text("Use /start para iniciar el bot.\nUse /nexttram para obtener información acerca del siguiente tranvía por cada parada.\nUse /lastStop para obtener información de la última parada seleccionada.")
+    update.message.reply_text("Use /start para iniciar el bot.\nUse /nexttram para obtener información acerca del siguiente tranvía por cada parada.")
 
 
 def english(bot, update, user_data):
     user_data["lang"] = "en"
-    update.message.reply_text("Use /start to test this bot.\nUse /nexttram to get info about the next tram for each stop.\nUse /lastStop to get info about the last stop selected.")
-
-def lastStop(bot, update, user_data):
-    query = update.callback_query
-    try:
-        lang = user_data["lang"]
-    except KeyError:
-        lang = "en"
-        user_data["lang"] = lang
-
-    try:
-        stop = user_data["stop"]
-        line = user_data["line"]
-
-        lines, stops, panels = requestData()
-        if len(panels) > 0:
-            panelsFormatted, last_update = formatPanels(panels, line, stop, lang=lang)
-            stopsFormatted = formatStops(stops, line)
-            stopName = ""
-            for stopItem in stopsFormatted:
-                if stopItem["id"] == stop:
-                    stopName = stopItem["name"]
-            if len(panelsFormatted) > 0:
-                reply = ""
-                if lang == "es":
-                    reply = "Próximos tranvías en *" + stopName + "*\n\n"
-                else:
-                    reply = "Oncoming trams for *" + stopName + "*\n\n"
-                for panel in panelsFormatted:
-                    reply = reply + panel["to"] + "\n" + panel["remaining"] + "\n\n"
-                reply = reply + "_" + last_update + "_ (GMT)"
-                update.message.reply_markdown(reply)
-
-    except KeyError:
-        text = ""
-        if lang == "es":
-            text = "Ha ocurrido un error al solicitar los datos 🙁"
-        else:
-            text = "There was some error requesting tram data 🙁"
-        update.message.reply_text(text)
+    update.message.reply_text("Use /start to test this bot.\nUse /nexttram to get info about the next tram for each stop.")
 
 def requestInfo(bot, update, user_data):
     try:
@@ -209,7 +170,6 @@ def button(bot, update, user_data):
 
     if type == "line":
         line = int(data.split("/")[1])
-        user_data["line"] = line
         lines, stops, panels = requestData()
         if len(stops) > 0:
             stopsFormatted = formatStops(stops, line)
@@ -237,7 +197,6 @@ def button(bot, update, user_data):
                                 reply_markup=reply_markup)
     elif type == "stop":
         stop = data.split("/")[1]
-        user_data["stop"] = stop
         line = int(data.split("/")[2])
         lines, stops, panels = requestData()
         if len(panels) > 0:
@@ -281,9 +240,9 @@ def help(bot, update, user_data):
 
     help = ""
     if lang == "es":
-        help = "Use /start para iniciar el bot.\nUse /nexttram para obtener información acerca del siguiente tranvía por cada parada.\nUse /lastStop para obtener información de la última parada seleccionada."
+        help = "Use /start para iniciar el bot.\nUse /nexttram para obtener información acerca del siguiente tranvía por cada parada."
     else:
-        help = "Use /start to test this bot.\nUse /nexttram to get info about the next tram for each stop.\nUse /lastStop to get info about the last stop selected."
+        help = "Use /start to test this bot.\nUse /nexttram to get info about the next tram for each stop."
 
     update.message.reply_text(help)
 
@@ -307,7 +266,6 @@ def main():
     updater.dispatcher.add_handler(CommandHandler("es", spanish, pass_user_data=True))
     updater.dispatcher.add_handler(CommandHandler("en", english, pass_user_data=True))
     updater.dispatcher.add_handler(CommandHandler("nexttram", requestInfo, pass_user_data=True))
-    updater.dispatcher.add_handler(CommandHandler("laststop", lastStop, pass_user_data=True))
     updater.dispatcher.add_handler(CallbackQueryHandler(button, pass_user_data=True))
     updater.dispatcher.add_handler(CommandHandler("help", help, pass_user_data=True))
     updater.dispatcher.add_error_handler(error)
