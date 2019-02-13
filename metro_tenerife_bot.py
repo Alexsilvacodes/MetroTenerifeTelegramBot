@@ -97,7 +97,7 @@ def formatPanels(panels, line, stop, lang="es"):
 
     for panel in panels_aux:
         panels_last_update = panel["lastUpdateFormatted"]
-        if lang is "es":
+        if lang == "es":
             panels_res.append({
                 "to": "🚇 > " + panel["destinationStopDescription"],
                 "remaining": "🕓 > Faltan " + str(panel["remainingMinutes"]) + " minutos"
