@@ -58,7 +58,7 @@ def formatLines(lines, lang="es"):
 
     for line in lines:
         name = ""
-        if lang is "es":
+        if lang == "es":
             name = "Línea " + line["id"]
         else:
             name = "Line " + line["id"]
