@@ -256,12 +256,12 @@ def button(bot, update, user_data):
                 for panel in panelsFormatted:
                     reply = reply + panel["to"] + "\n" + panel["remaining"] + "\n\n"
                 reply = reply + "_" + last_update + "_ (GMT)"
-                reply_markup = InlineKeyboardMarkup([InlineKeyboardButton("Refrescar" if lang == "es" else "Refresh", callback_data="stop/" + stop + "/" + str(line))])
+                reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("Refrescar" if lang == "es" else "Refresh", callback_data="stop/" + stop + "/" + str(line))]])
                 bot.send_message(text=reply,
                                 chat_id=query.message.chat_id,
                                 message_id=query.message.message_id,
-                                reply_markup=reply_markup,
-                                parse_mode= "Markdown")
+                                parse_mode= "Markdown",
+                                reply_markup=reply_markup)
     else:
         text = ""
         if lang == "es":
