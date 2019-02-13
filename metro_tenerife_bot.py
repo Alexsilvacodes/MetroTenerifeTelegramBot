@@ -117,14 +117,14 @@ Telegram related methods
 
 
 def start(bot, update, user_data):
-    lang = bot.get_me().language_code
+    lang = update.message.from_user.language_code
     if lang == "es":
         update.message.reply_text("Use /start para iniciar el bot.\nUse /nexttram para obtener información acerca del siguiente tranvía por cada parada.")
     else:
         update.message.reply_text("Use /start to test this bot.\nUse /nexttram to get info about the next tram for each stop.")
 
 def requestInfo(bot, update, user_data):
-    lang = bot.get_me().language_code
+    lang = update.message.from_user.language_code
 
     lines, stops, panels = requestData()
     linesFormatted = formatLines(lines, lang=lang)
@@ -145,7 +145,7 @@ def requestInfo(bot, update, user_data):
     update.message.reply_text(text, reply_markup=reply_markup)
 
 def button(bot, update, user_data):
-    lang = bot.get_me().language_code
+    lang = update.message.from_user.language_code
     query = update.callback_query
     data = query.data
     type = data.split("/")[0]
@@ -217,7 +217,7 @@ def button(bot, update, user_data):
 
 
 def help(bot, update, user_data):
-    lang = bot.get_me().language_code
+    lang = update.message.from_user.language_code
     help = ""
     if lang == "es":
         help = "Use /start para iniciar el bot.\nUse /nexttram para obtener información acerca del siguiente tranvía por cada parada."
