@@ -132,7 +132,12 @@ def english(bot, update, user_data):
 
 def lastStop(bot, update, user_data):
     query = update.callback_query
-    lang = user_data["lang"]
+    try:
+        lang = user_data["lang"]
+    except KeyError:
+        lang = "en"
+        user_data["lang"] = lang
+
     try:
         stop = user_data["stop"]
         line = user_data["line"]
@@ -170,7 +175,12 @@ def lastStop(bot, update, user_data):
                         message_id=query.message.message_id)
 
 def requestInfo(bot, update, user_data):
-    lang = user_data["lang"]
+    try:
+        lang = user_data["lang"]
+    except KeyError:
+        lang = "en"
+        user_data["lang"] = lang
+
     lines, stops, panels = requestData()
     linesFormatted = formatLines(lines, lang=lang)
     keyboard = []
@@ -188,33 +198,14 @@ def requestInfo(bot, update, user_data):
     else:
         text = "Please choose the tram line 🚇"
     update.message.reply_text(text, reply_markup=reply_markup)
-    
-def requestLastQueriedStopInfo(bot, update):
-    query = update.callback_query
-    lines, stops, panels = requestData()
-    line = last_line
-    stop = last_stop
-    if len(panels) > 0:
-        panelsFormatted, last_update = formatPanels(panels, line, stop, lang=lang)
-        stopsFormatted = formatStops(stops, line)
-        stopName = ""
-        for stopItem in stopsFormatted:
-            if stopItem["id"] == stop:
-                stopName = stopItem["name"]
-        if len(panelsFormatted) > 0:
-            reply = ""
-            if lang == "es":
-                reply = "Próximos tranvías en *" + stopName + "*\n\n"
-            else:
-                reply = "Oncoming trams for *" + stopName + "*\n\n"
-            for panel in panelsFormatted:
-                reply = reply + panel["to"] + "\n" + panel["remaining"] + "\n\n"
-            reply = reply + "_" + last_update + "_ (GMT)"
-            update.message.reply_text(reply, parse_mode= "Markdown")
-
 
 def button(bot, update, user_data):
-    lang = user_data["lang"]
+    try:
+        lang = user_data["lang"]
+    except KeyError:
+        lang = "en"
+        user_data["lang"] = lang
+
     query = update.callback_query
     data = query.data
     type = data.split("/")[0]
@@ -286,8 +277,13 @@ def button(bot, update, user_data):
 
 
 def help(bot, update, user_data):
+    try:
+        lang = user_data["lang"]
+    except KeyError:
+        user_data["lang"] = "en"
+
     help = ""
-    if user_data["lang"] == "es":
+    if lang == "es":
         help = "Use /start para iniciar el bot.\nUse /nexttram para obtener información acerca del siguiente tranvía por cada parada.\nUse /lastStop para obtener información de la última parada seleccionada."
     else:
         help = "Use /start to test this bot.\nUse /nexttram to get info about the next tram for each stop.\nUse /lastStop to get info about the last stop selected."
