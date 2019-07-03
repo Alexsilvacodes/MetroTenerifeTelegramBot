@@ -5,3 +5,4 @@ token
 .Trashes
 *.pyc
 *.pyo
+.vscode
