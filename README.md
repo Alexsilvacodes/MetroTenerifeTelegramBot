@@ -9,5 +9,3 @@ Python 🐍
 
 ## License
 [MIT](LICENSE)
-
-T
