@@ -240,9 +240,9 @@ def error(bot, update, error):
 
 def main():
     token = ""
-    is_prod = os.environ.get('IS_HEROKU', None)
+    is_prod = os.environ.get('TELEGRAM_TOKEN', None)
     if is_prod:
-        token = os.environ.get('TOKEN', None)
+        token = os.environ.get('TELEGRAM_TOKEN', None)
     else:
         f_token = open("token", "r")
         token = f_token.read().rstrip("\n")
