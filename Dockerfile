@@ -4,4 +4,4 @@ RUN mkdir /metro-tenerife-bot
 COPY . /metro-tenerife-bot
 WORKDIR /metro-tenerife-bot
 RUN pip install --user -r requirements.txt
-CMD [ "pyton", "metro_tenerife_bot.py" ]
+CMD [ "python", "metro_tenerife_bot.py" ]
