@@ -1,5 +1,5 @@
 # Metro Tenerife Bot (for Telegram 📱)
-Telegram bot to show the next tram for each stop (Tenerife, Spain) 🚇
+Telegram bot that shows the next tram info for each stop (Tenerife, Spain) 🚇
 
 ## Language
 Python 3+ 🐍
