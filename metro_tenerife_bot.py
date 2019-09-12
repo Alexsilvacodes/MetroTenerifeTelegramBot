@@ -6,7 +6,8 @@ from telegram.ext import Updater, CommandHandler, CallbackQueryHandler
 import logging
 
 from bs4 import BeautifulSoup
-import requests, json
+import requests
+import json
 import os
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -17,6 +18,7 @@ logger = logging.getLogger(__name__)
 """
 Metro Tenerife parser
 """
+
 
 def requestData():
     url = "http://tranviaonline.metrotenerife.com/#paneles"
@@ -120,14 +122,20 @@ def start(bot, update, user_data):
     lang = update.message.from_user.language_code
     user_data["lang"] = lang
     if lang == "es":
-        update.message.reply_text("Use /start para iniciar el bot.\nUse /nexttram para obtener información acerca del siguiente tranvía por cada parada.")
+        update.message.reply_text(
+            "Use /start para iniciar el bot.\nUse /nexttram para obtener información acerca del siguiente tranvía " +
+            "por cada parada."
+        )
     else:
-        update.message.reply_text("Use /start to test this bot.\nUse /nexttram to get info about the next tram for each stop.")
+        update.message.reply_text(
+            "Use /start to test this bot.\nUse /nexttram to get info about the next tram for each stop."
+        )
+
 
 def requestInfo(bot, update, user_data):
     lang = update.message.from_user.language_code
     user_data["lang"] = lang
-    lines, stops, panels = requestData()
+    lines, _, _ = requestData()
     linesFormatted = formatLines(lines, lang=lang)
     keyboard = []
 
@@ -145,6 +153,7 @@ def requestInfo(bot, update, user_data):
         text = "Please choose the tram line 🚇"
     update.message.reply_text(text, reply_markup=reply_markup)
 
+
 def button(bot, update, user_data):
     try:
         lang = user_data["lang"]
@@ -160,7 +169,7 @@ def button(bot, update, user_data):
 
     if type == "line":
         line = int(data.split("/")[1])
-        lines, stops, panels = requestData()
+        _, stops, panels = requestData()
         if len(stops) > 0:
             stopsFormatted = formatStops(stops, line)
             if len(stopsFormatted) > 0:
@@ -169,7 +178,9 @@ def button(bot, update, user_data):
                 i = 0
                 for stop in stopsFormatted:
                     i += 1
-                    keyboard_row.append(InlineKeyboardButton(stop["name"], callback_data="stop/" + stop["id"] + "/" + str(line)))
+                    keyboard_row.append(
+                        InlineKeyboardButton(stop["name"], callback_data="stop/" + stop["id"] + "/" + str(line))
+                    )
                     if i == 2:
                         keyboard.append(keyboard_row)
                         keyboard_row = []
@@ -181,14 +192,16 @@ def button(bot, update, user_data):
                     text = "Por favor, seleccione la parada de la que desea información 📊"
                 else:
                     text = "Please, choose the stop from which you need info 📊"
-                bot.send_message(text=text,
-                                chat_id=query.message.chat_id,
-                                message_id=query.message.message_id,
-                                reply_markup=reply_markup)
+                bot.send_message(
+                    text=text,
+                    chat_id=query.message.chat_id,
+                    message_id=query.message.message_id,
+                    reply_markup=reply_markup
+                )
     elif type == "stop":
         stop = data.split("/")[1]
         line = int(data.split("/")[2])
-        lines, stops, panels = requestData()
+        _, stops, panels = requestData()
         if len(panels) > 0:
             panelsFormatted, last_update = formatPanels(panels, line, stop, lang=lang)
             stopsFormatted = formatStops(stops, line)
@@ -205,21 +218,30 @@ def button(bot, update, user_data):
                 for panel in panelsFormatted:
                     reply = reply + panel["to"] + "\n" + panel["remaining"] + "\n\n"
                 reply = reply + "_" + last_update + "_ (GMT)"
-                reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("Refrescar" if lang == "es" else "Refresh", callback_data="stop/" + stop + "/" + str(line))]])
-                bot.send_message(text=reply,
-                                chat_id=query.message.chat_id,
-                                message_id=query.message.message_id,
-                                parse_mode= "Markdown",
-                                reply_markup=reply_markup)
+                reply_markup = InlineKeyboardMarkup([[
+                    InlineKeyboardButton(
+                        "Refrescar" if lang == "es" else "Refresh",
+                        callback_data="stop/" + stop + "/" + str(line)
+                    )
+                ]])
+                bot.send_message(
+                    text=reply,
+                    chat_id=query.message.chat_id,
+                    message_id=query.message.message_id,
+                    parse_mode="Markdown",
+                    reply_markup=reply_markup
+                )
     else:
         text = ""
         if lang == "es":
             text = "Ha ocurrido un error al solicitar los datos 🙁"
         else:
             text = "There was some error requesting tram data 🙁"
-        bot.send_message(text=text,
-                        chat_id=query.message.chat_id,
-                        message_id=query.message.message_id)
+        bot.send_message(
+            text=text,
+            chat_id=query.message.chat_id,
+            message_id=query.message.message_id
+        )
 
 
 def help(bot, update, user_data):
@@ -227,7 +249,10 @@ def help(bot, update, user_data):
     user_data["lang"] = lang
     help = ""
     if lang == "es":
-        help = "Use /start para iniciar el bot.\nUse /nexttram para obtener información acerca del siguiente tranvía por cada parada."
+        help = (
+            "Use /start para iniciar el bot.\nUse /nexttram para obtener información acerca del siguiente " +
+            "tranvía por cada parada."
+        )
     else:
         help = "Use /start to test this bot.\nUse /nexttram to get info about the next tram for each stop."
 
