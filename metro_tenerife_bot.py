@@ -123,7 +123,7 @@ def start(bot, update, user_data):
     user_data["lang"] = lang
     if lang == "es":
         update.message.reply_text(
-            "Use /start para iniciar el bot.\nUse /nexttram para obtener información acerca del siguiente tranvía " +
+            "Use /start para iniciar el bot.\nUse /nexttram para obtener información acerca del siguiente tranvía." +
             "por cada parada."
         )
     else:
