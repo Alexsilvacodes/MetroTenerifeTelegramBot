@@ -21,6 +21,5 @@ jobs:
         with:
           platforms: linux/arm64
           push: true
-          registry: ${{ secrets.REGISTRY }}
           tags: ${{ secrets.IMAGE_TAG }}
           file: Dockerfile
