@@ -19,6 +19,8 @@ jobs:
       - name: Build and Push to Arafito
         uses: docker/build-push-action@v2
         with:
+          platforms: linux/arm64
           push: true
+          registry: ${{ secrets.REGISTRY }}
           tags: ${{ secrets.IMAGE_TAG }}
           file: Dockerfile
